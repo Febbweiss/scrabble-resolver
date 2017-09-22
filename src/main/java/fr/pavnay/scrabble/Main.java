@@ -1,9 +1,7 @@
 package fr.pavnay.scrabble;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.util.List;
 
 import org.apache.commons.cli.CommandLine;
@@ -70,15 +68,14 @@ public class Main {
 	    try {
 		    Resolver resolver = DictionaryBuilder.generateResolver(new Resolver(), file, min, max);
 		    resolver.computeStatistics();
+		    resolver.displayStatistics();
 		    
-		    ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(new File("src/main/resources/resolvers/" + language)));
-		    oos.writeObject(resolver);
-		    oos.flush();
-		    oos.close();
+		    ScrabbleUtils.writeResolver(resolver, language);
 	    } catch( IOException e) {
 	    	System.err.println(e.getMessage());
 	    }
 	}
+	
 	
 	private static void getEnigma(CommandLine line) {
 		final String language = line.getOptionValue("lang", "");

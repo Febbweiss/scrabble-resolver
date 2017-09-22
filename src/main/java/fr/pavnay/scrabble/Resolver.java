@@ -8,20 +8,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import fr.pavnay.scrabble.impl.HashNodeImpl;
+
 public class Resolver implements Serializable {
-	private static final long serialVersionUID = 8267126995323709570L;
-	private Node[] nodes = new Node[26];
+	
+	private static final long serialVersionUID = 3424195161013074975L;
+	
+	public Node nodes = new HashNodeImpl();
 	private float[] statistics = new float[26];
 	private float totalCharacter = 0.0F;
 
 	public Node getNode(char character) {
-		Node node = this.nodes[(character - 'a')];
+		Node node = nodes.getNode(character);
 		this.statistics[(character - 'a')] += 1.0F;
 		this.totalCharacter += 1.0F;
-		if (node == null) {
-			node = new Node(Character.toString(character));
-			this.nodes[(character - 'a')] = node;
-		}
 		return node;
 	}
 
@@ -132,7 +132,7 @@ public class Resolver implements Serializable {
 
 		int setSize = letters.length;
 		if (size == setSize) {
-			Node currentNode = this.nodes[(sortLetters[0] - 'a')];
+			Node currentNode = nodes.getNode(sortLetters[0]);
 			if (currentNode == null) {
 				return null;
 			}
@@ -175,7 +175,8 @@ public class Resolver implements Serializable {
 	public int countWords() {
 		int total = 0;
 		for (int i = 0; i < 26; i++) {
-			Node current = this.nodes[i];
+//			Node current = this.nodes[i];
+			Node current = nodes.getNode((char)(i + 'a'));
 			if (current != null) {
 				total += current.getWordsCount();
 			}

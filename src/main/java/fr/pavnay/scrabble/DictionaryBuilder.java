@@ -3,14 +3,9 @@ package fr.pavnay.scrabble;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class DictionaryBuilder {
@@ -58,7 +53,7 @@ public class DictionaryBuilder {
 	public static Enigma generateEnigma(String language, int minLength, int maxLength) {
 		Resolver resolver;
 		try {
-			resolver = loadResolver(language);
+			resolver = ScrabbleUtils.loadResolver(language);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -66,51 +61,19 @@ public class DictionaryBuilder {
 		return resolver.generateEnigma(minLength, maxLength);
 	}
 
-	public static void generateResolver(String language) throws IOException {
-		File file = new File(
-				"C:/Users/viaduc105.smallbusiness/Documents/workspace-sts/SocialArena/resources/" + language);
-		if (!file.exists()) {
-			System.out.println("No dictionary for " + language);
-			return;
-		}
-		Resolver resolver = generateResolver(new Resolver(), file, 3, 7);
-		resolver.computeStatistics();
 
-		ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(
-				new File("C:/Users/viaduc105.smallbusiness/Documents/workspace-sts/SocialArena/resources/resolver/"
-						+ language)));
-		oos.writeObject(resolver);
-		oos.flush();
-		oos.close();
-	}
-
-	public static void loadResolvers() throws IOException, ClassNotFoundException {
-		List<String> languages = ScrabbleUtils.loadLanguages();
-		for (String language : languages) {
-			long t1 = System.currentTimeMillis();
-			loadResolver(language);
-			System.out.println("Resolver in " + language + " loaded in " + (System.currentTimeMillis() - t1) + "ms.");
-		}
-	}
-
-	private static Resolver loadResolver(String language)
-			throws FileNotFoundException, IOException, ClassNotFoundException {
-		Resolver resolver = (Resolver) resolvers.get(language);
-		if (resolver == null) {
-			long t1 = System.currentTimeMillis();
-			String path = DictionaryBuilder.class.getResource("/resolvers/" + language).getPath();
-			File file = new File(path);
-			if (!file.exists()) {
-				System.out.println("No resolver for " + language);
-				return null;
+	public static void main(String[] args) throws Exception {
+		for( String language : new String[] {"english", "french"} ) {
+			long avg = 0;
+			for( int i = 0; i < 100; i++) {
+				resolvers.clear();
+				long t1 = System.currentTimeMillis();
+				ScrabbleUtils.loadResolver(language);
+				long t2 = System.currentTimeMillis() - t1;
+				avg += t2;
 			}
-			ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file));
-			resolver = (Resolver) ois.readObject();
-			ois.close();
-
-			resolvers.put(language, resolver);
-			System.out.println("Resolver in " + language + " loaded in " + (System.currentTimeMillis() - t1) + "ms.");
+			System.out.println(language + " : " + (avg/100));
 		}
-		return resolver;
 	}
+	
 }
