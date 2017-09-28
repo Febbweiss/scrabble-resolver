@@ -19,7 +19,7 @@ public class Main {
 	private final static Options options = configParameters();
 	
 	public static void main(String[] args) {
-		
+		//achilst
 		final CommandLineParser parser = new DefaultParser();
 		CommandLine firstLine = null;
 		try {
@@ -38,6 +38,7 @@ public class Main {
 		
 		try {
 			CommandLine line = parser.parse(options, args);
+			System.out.println(line.getArgList());
 			if( line.hasOption( "build" ) ) {
 				generate(line);
 			} else {
@@ -81,10 +82,13 @@ public class Main {
 		final String language = line.getOptionValue("lang", "");
 		final int min = Integer.parseInt(line.getOptionValue("min", "3"));
 		final int max = Integer.parseInt(line.getOptionValue("max", "7"));
-		
+		char[] letters = null;
+		if( line.getArgList().size() == 1 ) {
+			letters = line.getArgList().get(0).toCharArray();
+		}
 		try {
 			manageLanguage(language);
-			Enigma enigma = DictionaryBuilder.generateEnigma(language, min, max);
+			Enigma enigma = DictionaryBuilder.generateEnigma(language, min, max, letters);
 			System.out.println(enigma);
 		} catch(IllegalArgumentException e) {
 			System.err.println(e.getMessage());
@@ -140,7 +144,7 @@ public class Main {
 				.argName("max")
 				.required(false)
 				.build();
-		
+
 		final Options options = new Options();
 
 		options.addOption(buildOption);

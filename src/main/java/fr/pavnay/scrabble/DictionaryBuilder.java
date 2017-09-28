@@ -50,7 +50,7 @@ public class DictionaryBuilder {
 		return resolver;
 	}
 
-	public static Enigma generateEnigma(String language, int minLength, int maxLength) {
+	public static Enigma generateEnigma(String language, int minLength, int maxLength, char[] letters) {
 		Resolver resolver;
 		try {
 			resolver = ScrabbleUtils.loadResolver(language);
@@ -58,7 +58,7 @@ public class DictionaryBuilder {
 			e.printStackTrace();
 			return null;
 		}
-		return resolver.generateEnigma(minLength, maxLength);
+		return resolver.generateEnigma(minLength, maxLength, letters);
 	}
 
 

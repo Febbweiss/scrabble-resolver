@@ -47,12 +47,13 @@ public class Resolver implements Serializable {
 		return this.statistics;
 	}
 
-	public Enigma generateEnigma(int minimalLettersCount, int maximalLettersCount) {
+	public Enigma generateEnigma(int minimalLettersCount, int maximalLettersCount, char[] letters) {
 		boolean mustRun = false;
-		char[] letters;
 		Map<Integer, List<String>> allWords;
 		do {
-			letters = getRandomSet(maximalLettersCount);
+			if( letters == null ) {
+				letters = getRandomSet(maximalLettersCount);
+			}
 			allWords = getWords(letters, minimalLettersCount);
 
 			int wordsCount = 0;
